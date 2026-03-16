@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>穿影智医——基层精准医疗智能一体化体系</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+    body {
+      background: #b3cbeb;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-size: 28px;
+      color: #222;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #f1f3f5;
+      color: #555;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #007bff;
+      color: white;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .card h2 {
+      font-size: 20px;
+      color: #222;
+      margin-bottom: 18px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background0.2s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button.success {
+      background: #28a745;
+    }
+
+    button.success:hover {
+      background: #218838;
+    }
+
+    button.warn {
+      background: #fd7e14;
+    }
+
+    button.warn:hover {
+      background: #e67e22;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .status-green {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .status-orange {
+      color: #fd7e14;
+      font-weight: bold;
+    }
+
+    .status-red {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .timeline {
+      margin: 20px 0;
+      padding-left: 20px;
+      border-left: 3px solid #e0e0e0;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 12px 0 12px 24px;
+      color: #555;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -27px;
+      top: 16px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid #e0e0e0;
+    }
+
+    .timeline-item.done {
+      color: #28a745;
+    }
+
+    .timeline-item.done::before {
+      background: #28a745;
+      border-color: white;
+    }
+
+    .timeline-item.current {
+      color: #fd7e14;
+    }
+
+    .timeline-item.current::before {
+      background: #fd7e14;
+      border-color: white;
+    }
+
+    .timeline-item.warn {
+      color: #dc3545;
+    }
+
+    .timeline-item.warn::before {
+      background: #dc3545;
+      border-color: white;
+    }
+
+    .map-placeholder {
+      width: 100%;
+      height: 250px;
+      background: #f0f2f5;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      margin: 15px 0;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      font-size: 12px;
+      color: #999;
+      margin-top: 40px;
+      line-height: 1.5;
+    }
+
+    .medical-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .medical-item {
+      flex: 1;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .medical-item img {
+      width: 100%;
+      border-radius: 10px;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .medical-item h3 {
+      font-size: 18px;
+      margin: 15px 0;
+      color: #222;
+      font-weight: 600;
+    }
+
+    .medical-item p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+<style>
+.header h1 {
+  font-size: 35px;
+  font-weight: bold;
+  color: #0056b3;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+}
+</style>
+      <h1>穿影智医——基层精准医疗智能一体化体系</h1>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-page="home">首页</button>
+      <button class="tab-btn" data-page="trace">追溯查询</button>
+      <button class="tab-btn" data-page="doctor">医生操作</button>
+      <button class="tab-btn" data-page="lab">检验机构</button>
+      <button class="tab-btn" data-page="patient">患者查询</button>
+    </div>
+
+    <div id="home" class="page active">
+      <div class="card">
+        <h2>项目介绍</h2>
+        <p>本项目以<strong>“基层共建、场景适配、服务下沉”为核心</strong>，聚焦基层医疗穿刺领域，打造“精准穿刺+智能服务+基层合作”一体化系统——以“±0.5mm高精度模块化穿刺装置”为核心硬件,搭配“DMSO+海藻糖复合冻存液”“AI动态定位算法”两大技术支撑,通过“医联体牵头+县域服务商落地+基层机构共建”的合作模式,实现穿刺操作标准化（基层医护2天上手）、样本保护高效化（24小时活性98%）、设备成本亲民化（单次耗材150元），为基层医疗机构提供“买得起、用得会、能持续”的穿刺全流程解决方案。</p >
+
+        <h2 style="margin-top: 30px;">产品创新点</h2>
+        <p>• 低成本高效能模块化穿刺装置研发</p >
+        <p>• 安全化全流程穿刺防护系统构建</p >
+        <p>• 普惠化基层穿刺诊疗网络搭建</p >
+      </div>
+
+      <div class="card">
+        <h2>核心功能模块</h2>
+        <div class="medical-container">
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65b5be3581.jpg" alt="智慧医疗交互">
+            <h3>智慧医疗交互</h3>
+            <p>穿刺医疗服务<br>全流程管理与诊断</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65b40acd49.jpg" alt="穿刺诊疗设备">
+            <h3>高端穿刺设备</h3>
+            <p>精准定位<br>提高精准诊断与治疗</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65b4a2e0a1.jpg" alt="活性检测">
+            <h3>活性检验检测</h3>
+            <p>标准化样本检测<br>筛查核心环节</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65b53ef75d.jpg" alt="临床诊疗">
+            <h3>诊疗结果管理</h3>
+            <p>一对一健康监测<br>基层规范化诊疗</p >
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>合作单位介绍</h2>
+        <div class="medical-container">
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65db3c8846.png" alt="高校合作">
+            <h3>高校合作</h3>
+            <p>哈尔滨医科大学提供技术研发与人才支撑共建联合实验室</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65df13e895.png" alt="医院合作">
+            <h3>医院合作</h3>
+            <p>哈医大一附院等提供临床需求反馈与试点验证支持</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65ddee4d75.png" alt="电商合作">
+            <h3>电商合作</h3>
+            <p>京东健康提供直供渠道与24小时冷链转运服务</p >
+          </div>
+          <div class="medical-item">
+            <img src="https://s1.img-e.com/20260315/69b65e01165f0.png" alt="产业合作">
+            <h3>产业合作</h3>
+            <p>代工厂保障产能20家县域服务商提供本地化售后</p >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="trace" class="page">
+      <div class="card">
+        <h2>样本追溯查询</h2>
+        <input type="text" id="capsule_id_trace" placeholder="输入胶囊ID">
+        <button onclick="queryTrace()">查询</button>
+      </div>
+      <div class="card" id="trace_result" style="display: none;">
+        <h2>样本状态</h2>
+        <p>胶囊ID:<span id="trace_cid"></span></p >
+        <p>当前状态：<span id="trace_status"></span></p >
+        <p>温度状态：<span id="trace_temp"></span></p >
+
+        <h3 style="margin: 20px 0 10px; font-size: 16px;">物流轨迹</h3>
+        <div class="map-placeholder">
+          地图占位：可接入高德/百度地图展示物流轨迹
+        </div>
+
+        <h3 style="margin: 20px 0 10px; font-size: 16px;">时间轴</h3>
+        <div class="timeline" id="trace_timeline"></div>
+      </div>
+    </div>
+
+    <div id="doctor" class="page">
+      <div class="card">
+        <h2>医生操作 - 取样/封存</h2>
+        <input type="text" id="capsule_id_doctor" placeholder="扫码录入胶囊ID">
+        <input type="text" id="from_addr" placeholder="出发地">
+        <input type="text" id="to_addr" placeholder="目的地">
+
+        <div class="btn-row">
+          <button class="success" onclick="recordSample()">记录取样时间</button>
+          <button class="success" onclick="recordSeal()">记录封存时间</button>
+        </div>
+        <button class="warn" onclick="submitLogistics()">提交物流信息</button>
+      </div>
+    </div>
+
+    <div id="lab" class="page">
+      <div class="card">
+        <h2>检验机构 - 确认接收</h2>
+        <input type="text" id="capsule_id_lab" placeholder="扫码录入胶囊ID">
+        <select id="temp_status">
+          <option value="正常">温度正常</option>
+          <option value="超温">温度超温</option>
+        </select>
+        <button class="success" onclick="confirmReceive()">确认接收并录入温度</button>
+      </div>
+    </div>
+
+    <div id="patient" class="page">
+      <div class="card">
+        <h2>患者查询样本进度</h2>
+        <input type="text" id="capsule_id_patient" placeholder="患者姓名/输入胶囊ID">
+        <button onclick="queryPatient()">查询进度</button>
+      </div>
+      <div class="card" id="patient_result" style="display: none;">
+        <h2>样本进度</h2>
+        <p>胶囊ID:<span id="patient_cid"></span></p >
+        <p>当前状态：<span id="patient_status"></span></p >
+        <p>温度状态：<span id="patient_temp"></span></p >
+
+        <h3 style="margin: 20px 0 10px; font-size: 16px;">进度时间轴</h3>
+        <div class="timeline" id="patient_timeline"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      本平台为创新医疗研发配套的项目介绍和样本追溯系统，仅用于科研展示与技术交流，不用于临床诊疗，不销售医疗器械。<br>
+      Copyright © 2025 医疗服务平台 All Rights Reserved.
+    </div>
+  </div>
+
+  <script>
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.page).classList.add('active');
+      });
+    });
+    let DB = JSON.parse(localStorage.getItem('sampleDB')) || {};
+    function saveDB() {
+      localStorage.setItem('sampleDB', JSON.stringify(DB));
+    }
+
+    function recordSample() {
+      const cid = document.getElementById('capsule_id_doctor').value;
+      if (!cid) { alert('请输入胶囊ID'); return; }
+      if (!DB[cid]) DB[cid] = {};
+      DB[cid].sampleTime = new Date().toLocaleString();
+      DB[cid].status = '已取样';
+      saveDB();
+      alert('取样时间已记录');
+    }
+
+    function recordSeal() {
+      const cid = document.getElementById('capsule_id_doctor').value;
+      if (!cid) { alert('请输入胶囊ID'); return; }
+      if (!DB[cid]) DB[cid] = {};
+      DB[cid].sealTime = new Date().toLocaleString();
+      DB[cid].status = '已封存';
+      saveDB();
+      alert('封存时间已记录');
+    }
+
+    function submitLogistics() {
+      const cid = document.getElementById('capsule_id_doctor').value;
+      const from = document.getElementById('from_addr').value;
+      const to = document.getElementById('to_addr').value;
+      if (!cid || !from || !to) { alert('信息不完整'); return; }
+      if (!DB[cid]) DB[cid] = {};
+      DB[cid].from = from;
+      DB[cid].to = to;
+      DB[cid].status = '运输中';
+      saveDB();
+      alert('物流信息已提交');
+    }
+
+    function confirmReceive() {
+      const cid = document.getElementById('capsule_id_lab').value;
+      const temp = document.getElementById('temp_status').value;
+      if (!cid) { alert('请输入胶囊ID'); return; }
+      if (!DB[cid]) DB[cid] = {};
+      DB[cid].receiveTime = new Date().toLocaleString();
+      DB[cid].temp = temp;
+      DB[cid].status = '已签收';
+      saveDB();
+      alert('已确认接收并录入温度状态');
+    }
+
+    function queryTrace() {
+      const cid = document.getElementById('capsule_id_trace').value;
+      const data = DB[cid];
+      if (!data) { alert('未找到该胶囊'); return; }
+
+      document.getElementById('trace_result').style.display = 'block';
+      document.getElementById('trace_cid').textContent = cid;
+
+      let statusCls = 'status-green';
+      if (data.status === '运输中') statusCls = 'status-orange';
+      if (data.temp === '超温') statusCls = 'status-red';
+      document.getElementById('trace_status').innerHTML = `<span class="${statusCls}">${data.status || '未知'}</span>`;
+      document.getElementById('trace_temp').textContent = data.temp || '未录入';
+
+      renderTimeline(data, 'trace_timeline');
+    }
+
+    function queryPatient() {
+      const cid = document.getElementById('capsule_id_patient').value;
+      const data = DB[cid];
+      if (!data) { alert('未找到该胶囊'); return; }
+
+      document.getElementById('patient_result').style.display = 'block';
+      document.getElementById('patient_cid').textContent = cid;
+
+      let statusCls = 'status-green';
+      if (data.status === '运输中') statusCls = 'status-orange';
+      if (data.temp === '超温') statusCls = 'status-red';
+      document.getElementById('patient_status').innerHTML = `<span class="${statusCls}">${data.status || '未知'}</span>`;
+      document.getElementById('patient_temp').textContent = data.temp || '未录入';
+
+      renderTimeline(data, 'patient_timeline');
+    }
+
+    function renderTimeline(data, targetId) {
+      let html = '';
+      const steps = [
+        { key: 'sampleTime', label: '已取样' },
+        { key: 'sealTime', label: '已封存' },
+        { key: 'status', label: '运输中', condition: (d) => d.status === '运输中' || d.status === '已签收' },
+        { key: 'receiveTime', label: '已签收' }
+      ];
+
+      steps.forEach(step => {
+        let done = false;
+        let current = false;
+        if (step.key === 'status') {
+          done = step.condition(data);
+          current = data.status === '运输中';
+        } else {
+          done = !!data[step.key];
+        }
+
+        let cls = '';
+        if (current) cls = 'current';
+        else if (done) cls = 'done';
+        if (data.temp === '超温' && step.label === '已签收') cls = 'warn';
+
+        html += `<div class="timeline-item ${cls}">
+          ${step.label}
+          ${data[step.key] ? `<br><small>${data[step.key]}</small>` : ''}
+        </div>`;
+      });
+
+      document.getElementById(targetId).innerHTML = html;
+    }
+  </script>
+</body>
+</html>

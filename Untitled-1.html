@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>昆虫标本保存管理系统</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft YaHei",sans-serif}
+body{background:#f0f9f4;color:#333;line-height:1.6;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.title{text-align:center;color:#137e4b;margin-bottom:24px}
+.tab-box{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.tab{padding:10px 24px;background:#e6f7ef;border:none;border-radius:8px;cursor:pointer;font-size:16px}
+.tab.active{background:#22a86a;color:white}
+.page{display:none;background:white;padding:24px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.page.show{display:block}
+.section{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #e6f7ef}
+.section h3{color:#159961;margin-bottom:12px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.form-item{display:flex;flex-direction:column}
+.form-item label{font-size:14px;color:#444;margin-bottom:4px}
+.form-item input,.form-item select,.form-item textarea{padding:8px 10px;border:1px solid #c1e7d1;border-radius:6px;outline:none}
+.form-item input:focus,.form-item select:focus,.form-item textarea:focus{border-color:#22a86a}
+textarea{resize:vertical;min-height:60px}
+.btn-box{text-align:center;margin-top:20px}
+.btn{padding:10px 30px;background:#22a86a;color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer}
+.btn:hover{background:#1a8d57}
+.query-box{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+.query-box input{flex:1;max-width:300px}
+.result{background:#f7fffb;padding:20px;border-radius:10px;white-space:pre-line}
+.auto-code{font-weight:bold;color:#159961}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="title">昆虫标本保存管理系统</h1>
+  <div class="tab-box">
+    <button class="tab active" data-target="add">标本信息录入</button>
+    <button class="tab" data-target="query">标本信息查询</button>
+  </div>
+
+  <!-- 录入页面 -->
+  <div id="add" class="page show">
+    <div class="section">
+      <h3>基础编号</h3>
+      <div class="form-grid">
+        <div class="form-item">
+          <label>标本编号（7位）</label>
+          <input type="text" id="code" readonly class="auto-code">
+        </div>
+        <div class="form-item">
+          <label>录入日期</label>
+          <input type="text" id="inputDate" readonly>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>分类信息</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>中文名</label><input id="cnName"></div>
+        <div class="form-item"><label>拉丁学名</label><input id="latinName"></div>
+        <div class="form-item"><label>界</label><input id="kingdom"></div>
+        <div class="form-item"><label>门</label><input id="phylum"></div>
+        <div class="form-item"><label>纲</label><input id="classify"></div>
+        <div class="form-item"><label>目</label><input id="order"></div>
+        <div class="form-item"><label>科</label><input id="family"></div>
+        <div class="form-item"><label>属</label><input id="genus"></div>
+        <div class="form-item"><label>种</label><input id="species"></div>
+        <div class="form-item"><label>别名（俗名）</label><input id="alias"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>采集信息</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>采集日期</label><input id="collectDate"></div>
+        <div class="form-item"><label>采集省份/城市</label><input id="collectCity"></div>
+        <div class="form-item"><label>具体地点</label><input id="collectPlace"></div>
+        <div class="form-item"><label>生境</label><input id="habitat"></div>
+        <div class="form-item"><label>海拔（选填）</label><input id="altitude"></div>
+        <div class="form-item"><label>采集方式</label><input id="collectMethod"></div>
+        <div class="form-item"><label>采集人</label><input id="collector"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>形态特征</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>虫态</label><input id="insectStage"></div>
+        <div class="form-item"><label>性别</label><input id="gender"></div>
+        <div class="form-item"><label>体长（mm）</label><input id="bodyLength"></div>
+        <div class="form-item"><label>翅展（mm）</label><input id="wingSpan"></div>
+        <div class="form-item"><label>体色</label><input id="bodyColor"></div>
+        <div class="form-item"><label>斑纹特征</label><input id="pattern"></div>
+        <div class="form-item"><label>标本完整性</label><input id="integrity"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>生态信息</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>食性与寄主</label><input id="food"></div>
+        <div class="form-item"><label>活动时间（昼行/夜行）</label><input id="activeTime"></div>
+        <div class="form-item"><label>发生季节</label><input id="season"></div>
+        <div class="form-item"><label>稀有程度</label><input id="rarity"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>标本制作与保存</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>制作方式</label><input id="makeMethod"></div>
+        <div class="form-item"><label>制作日期</label><input id="makeDate"></div>
+        <div class="form-item"><label>制作人</label><input id="maker"></div>
+        <div class="form-item"><label>保存环境</label><input id="saveEnv"></div>
+        <div class="form-item"><label>保存状态</label><input id="saveStatus"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>图片资料</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>标本照片</label><input id="photoSpecimen"></div>
+        <div class="form-item"><label>生态照片</label><input id="photoEco"></div>
+        <div class="form-item"><label>参考资料来源</label><input id="reference"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>备注</h3>
+      <div class="form-grid">
+        <div class="form-item"><label>鉴定说明</label><textarea id="identifyNote"></textarea></div>
+        <div class="form-item"><label>特殊特征</label><textarea id="specialFeature"></textarea></div>
+        <div class="form-item"><label>其他补充</label><textarea id="otherNote"></textarea></div>
+      </div>
+    </div>
+
+    <div class="btn-box">
+      <button class="btn" onclick="saveSpecimen()">保存标本信息</button>
+    </div>
+  </div>
+
+  <!-- 查询页面 -->
+  <div id="query" class="page">
+    <div class="query-box">
+      <input placeholder="请输入7位标本编号" id="queryCode">
+      <button class="btn" onclick="querySpecimen()">查询</button>
+    </div>
+    <div id="result" class="result"></div>
+  </div>
+</div>
+
+<script>
+// 切换标签
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.target).classList.add('show');
+  });
+});
+
+// 初始化日期与编号
+window.onload = function(){
+  let now = new Date();
+  let dateStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+  document.getElementById('inputDate').value = dateStr;
+  generateNextCode();
+}
+
+// 生成7位编号
+function generateNextCode(){
+  let list = JSON.parse(localStorage.getItem('specimens')) || [];
+  let next = list.length + 1;
+  document.getElementById('code').value = String(next).padStart(7,'0');
+}
+
+// 保存
+function saveSpecimen(){
+  let code = document.getElementById('code').value;
+  let data = {
+    code:code,
+    inputDate:document.getElementById('inputDate').value,
+    cnName:document.getElementById('cnName').value,
+    latinName:document.getElementById('latinName').value,
+    kingdom:document.getElementById('kingdom').value,
+    phylum:document.getElementById('phylum').value,
+    classify:document.getElementById('classify').value,
+    order:document.getElementById('order').value,
+    family:document.getElementById('family').value,
+    genus:document.getElementById('genus').value,
+    species:document.getElementById('species').value,
+    alias:document.getElementById('alias').value,
+    collectDate:document.getElementById('collectDate').value,
+    collectCity:document.getElementById('collectCity').value,
+    collectPlace:document.getElementById('collectPlace').value,
+    habitat:document.getElementById('habitat').value,
+    altitude:document.getElementById('altitude').value,
+    collectMethod:document.getElementById('collectMethod').value,
+    collector:document.getElementById('collector').value,
+    insectStage:document.getElementById('insectStage').value,
+    gender:document.getElementById('gender').value,
+    bodyLength:document.getElementById('bodyLength').value,
+    wingSpan:document.getElementById('wingSpan').value,
+    bodyColor:document.getElementById('bodyColor').value,
+    pattern:document.getElementById('pattern').value,
+    integrity:document.getElementById('integrity').value,
+    food:document.getElementById('food').value,
+    activeTime:document.getElementById('activeTime').value,
+    season:document.getElementById('season').value,
+    rarity:document.getElementById('rarity').value,
+    makeMethod:document.getElementById('makeMethod').value,
+    makeDate:document.getElementById('makeDate').value,
+    maker:document.getElementById('maker').value,
+    saveEnv:document.getElementById('saveEnv').value,
+    saveStatus:document.getElementById('saveStatus').value,
+    photoSpecimen:document.getElementById('photoSpecimen').value,
+    photoEco:document.getElementById('photoEco').value,
+    reference:document.getElementById('reference').value,
+    identifyNote:document.getElementById('identifyNote').value,
+    specialFeature:document.getElementById('specialFeature').value,
+    otherNote:document.getElementById('otherNote').value
+  };
+  let list = JSON.parse(localStorage.getItem('specimens')) || [];
+  let index = list.findIndex(i => i.code === code);
+  if(index === -1) list.push(data);
+  else list[index] = data;
+  localStorage.setItem('specimens', JSON.stringify(list));
+  alert('保存成功！');
+  generateNextCode();
+}
+
+// 查询
+function querySpecimen(){
+  let code = document.getElementById('queryCode').value.trim();
+  if(!/^\d{7}$/.test(code)){
+    alert('请输入7位数字编号');
+    return;
+  }
+  let list = JSON.parse(localStorage.getItem('specimens')) || [];
+  let item = list.find(i => i.code === code);
+  let res = document.getElementById('result');
+  if(!item){
+    res.textContent = '未找到该编号的标本信息';
+    return;
+  }
+  let txt = `
+【标本编号】${item.code}
+【录入日期】${item.inputDate}
+
+【分类信息】
+中文名：${item.cnName}
+拉丁学名：${item.latinName}
+界：${item.kingdom}  门：${item.phylum}  纲：${item.classify}
+目：${item.order}  科：${item.family}  属：${item.genus}  种：${item.species}
+别名：${item.alias}
+
+【采集信息】
+采集日期：${item.collectDate}
+采集地点：${item.collectCity} ${item.collectPlace}
+生境：${item.habitat}  海拔：${item.altitude}
+采集方式：${item.collectMethod}  采集人：${item.collector}
+
+【形态特征】
+虫态：${item.insectStage}  性别：${item.gender}
+体长：${item.bodyLength}mm  翅展：${item.wingSpan}mm
+体色：${item.bodyColor}
+斑纹：${item.pattern}
+完整性：${item.integrity}
+
+【生态信息】
+食性与寄主：${item.food}
+活动时间：${item.activeTime}
+发生季节：${item.season}
+稀有程度：${item.rarity}
+
+【制作与保存】
+制作方式：${item.makeMethod}  制作日期：${item.makeDate}  制作人：${item.maker}
+保存环境：${item.saveEnv}  保存状态：${item.saveStatus}
+
+【图片资料】
+标本照片：${item.photoSpecimen}
+生态照片：${item.photoEco}
+参考来源：${item.reference}
+
+【备注】
+鉴定说明：${item.identifyNote}
+特殊特征：${item.specialFeature}
+其他补充：${item.otherNote}
+  `;
+  res.textContent = txt;
+}
+</script>
+</body>
+</html>

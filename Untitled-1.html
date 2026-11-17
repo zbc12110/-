@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>饮食推荐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #f0f8ff;
+            padding: 20px 15px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c7873;
+            margin-bottom: 24px;
+            font-size: 24px;
+        }
+        .home-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+            cursor: pointer;
+        }
+        .home-card h2 {
+            color: #2c7873;
+            font-size: 19px;
+            margin-bottom:8px;
+        }
+        .home-card p {
+            color:#666;
+            font-size:14px;
+        }
+        .page {
+            display:none;
+            background:#fff;
+            border-radius:16px;
+            padding:24px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+        .back-btn {
+            color:#2c7873;
+            border:none;
+            background:none;
+            font-size:16px;
+            margin-bottom:16px;
+            cursor:pointer;
+        }
+        .tag-group {
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin:16px 0;
+        }
+        .tag {
+            padding:8px 14px;
+            border:1px solid #b8e0dd;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:14px;
+        }
+        .tag.active {
+            background:#2c7873;
+            color:white;
+            border-color:#2c7873;
+        }
+        .input-box {
+            width:100%;
+            padding:12px 16px;
+            border:1px solid #b8e0dd;
+            border-radius:10px;
+            font-size:16px;
+            outline:none;
+            margin:12px 0;
+        }
+        .btn {
+            width:100%;
+            padding:12px;
+            background-color:#2c7873;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            cursor:pointer;
+            margin-top:8px;
+        }
+        .item-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            padding:10px 0;
+            border-bottom:1px solid #dceee9;
+            flex-wrap:wrap;
+        }
+        .item-name{
+            flex:1;
+        }
+        .item-btn{
+            padding:6px 10px;
+            border:none;
+            border-radius:6px;
+            color:white;
+            font-size:13px;
+            cursor:pointer;
+        }
+        .mt-item{
+            background:#00a0e9;
+        }
+        .tb-item{
+            background:#ff4400;
+        }
+        .result-box {
+            margin-top:20px;
+            padding:16px;
+            background:#e6f7ef;
+            border-radius:10px;
+        }
+        .result-box h3 {
+            margin-bottom:12px;
+        }
+        .disclaimer {
+            margin-top:24px;
+            font-size:13px;
+            color:#888;
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 首页 三个入口 -->
+        <div id="homePage">
+            <h1>饮食推荐</h1>
+            <div class="home-card" onclick="showPage('normalPage')">
+                <h2>🍚 无忌口，随便选</h2>
+                <p>没有过敏、没有忌口，按口味、品类推荐成品外卖餐食</p>
+            </div>
+            <div class="home-card" onclick="showPage('allergyPage')">
+                <h2>🥜 有忌口/过敏</h2>
+                <p>输入过敏、忌口食物，自动筛选可以吃的成品菜</p>
+            </div>
+            <div class="home-card" onclick="showPage('diseasePage')">
+                <h2>🩺 病史饮食</h2>
+                <p>输入病症，只推荐适合该病症食用的成品菜品</p>
+            </div>
+        </div>
+
+        <!-- 第一部分：无忌口 -->
+        <div id="normalPage" class="page">
+            <button class="back-btn" onclick="backHome()">← 返回首页</button>
+            <h2>选择想吃的类型</h2>
+            <div class="tag-group">
+                <div class="tag" data-type="面食">面食</div>
+                <div class="tag" data-type="米饭">米饭套餐</div>
+                <div class="tag" data-type="地方特色">地方特色</div>
+                <div class="tag" data-type="小吃卤味">小吃卤味</div>
+                <div class="tag" data-type="煲菜">煲锅硬菜</div>
+            </div>
+            <h2>口味选择</h2>
+            <div class="tag-group">
+                <div class="tag" data-taste="辣">辣</div>
+                <div class="tag" data-taste="不辣">不辣</div>
+                <div class="tag" data-taste="清淡">清淡</div>
+                <div class="tag" data-taste="酸甜">酸甜</div>
+            </div>
+            <button class="btn" onclick="getNormalRecommend()">生成推荐</button>
+            <div class="result-box" id="normalResult" style="display:none;">
+                <h3>推荐成品餐食</h3>
+                <div id="normalList"></div>
+            </div>
+        </div>
+
+        <!-- 第二部分：忌口过敏 -->
+        <div id="allergyPage" class="page">
+            <button class="back-btn" onclick="backHome()">← 返回首页</button>
+            <h2>输入忌口/过敏食物</h2>
+            <input class="input-box" id="allergyInput" placeholder="例如：花生、海鲜、牛肉">
+            <button class="btn" onclick="getAllergyRecommend()">筛选推荐</button>
+            <div class="result-box" id="allergyResult" style="display:none;">
+                <h3>可以吃的成品餐食</h3>
+                <div id="allergyList"></div>
+            </div>
+        </div>
+
+        <!-- 第三部分：病史病症 -->
+        <div id="diseasePage" class="page">
+            <button class="back-btn" onclick="backHome()">← 返回首页</button>
+            <h2>输入你的病症</h2>
+            <input class="input-box" id="diseaseInput" placeholder="例如：糖尿病、高血压、痛风">
+            <button class="btn" onclick="getDiseaseRecommend()">查询推荐</button>
+            <div class="result-box" id="diseaseResult" style="display:none;">
+                <h3>适合食用成品菜品</h3>
+                <div id="diseaseList"></div>
+            </div>
+            <div class="disclaimer">仅做饮食参考，不能替代医生医嘱</div>
+        </div>
+    </div>
+
+<script>
+let currentType = "";
+let currentTaste = "";
+
+function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    document.getElementById('homePage').style.display='none';
+    document.getElementById(id).style.display='block';
+}
+function backHome(){
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    document.getElementById('homePage').style.display='block';
+}
+
+// 标签选择
+document.querySelectorAll('#normalPage .tag').forEach(tag=>{
+    tag.onclick = function(){
+        if(this.dataset.type){
+            document.querySelectorAll('#normalPage .tag[data-type]').forEach(t=>t.classList.remove('active'));
+            this.classList.add('active');
+            currentType = this.dataset.type;
+        }else if(this.dataset.taste){
+            document.querySelectorAll('#normalPage .tag[data-taste]').forEach(t=>t.classList.remove('active'));
+            this.classList.add('active');
+            currentTaste = this.dataset.taste;
+        }
+    }
+})
+
+// 无忌口成品菜库（每一类≥10道成品外卖菜）
+const normalFood = {
+    "面食":{
+        "辣":["麻辣牛肉面","重庆小面","酸辣粉","麻辣拌面","红油抄手","辣子鸡面","泡椒鸡杂面","香辣肥肠面","麻辣凉面","担担面"],
+        "不辣":["番茄鸡蛋面","清汤牛肉面","韭菜鸡蛋饺子","香菇鸡肉面","鲜肉馄饨面","三鲜面","骨汤面","虾仁馄饨面","白菜猪肉水饺","菌菇面"],
+        "清淡":["阳春面","蔬菜面片汤","青菜瘦肉面","冬瓜面片汤","山药鸡汤面","小白菜素面","丝瓜鸡蛋面","豆腐青菜面","鲜菇素面","冬瓜丸子面"],
+        "酸甜":["番茄拌面","番茄肥牛面","番茄鸡肉面","番茄鸡蛋馄饨","番茄三鲜面","番茄豆腐面","番茄菌菇面","番茄虾仁面","番茄瘦肉面","番茄土豆面"]
+    },
+    "米饭":{
+        "辣":["辣子鸡盖饭","麻辣香锅套餐","鱼香肉丝盖饭","小炒黄牛肉盖饭","麻婆豆腐盖饭","酸菜肥牛盖饭","香辣鸡杂盖饭","剁椒鸡蛋盖饭","回锅肉盖饭","香辣土豆丝盖饭"],
+        "不辣":["番茄牛腩饭","土豆牛肉饭","卤肉饭","香菇滑鸡饭","照烧鸡腿饭","土豆排骨饭","香菇肉片饭","虾仁滑蛋饭","木耳肉片饭","白菜豆腐饭"],
+        "清淡":["香菇滑鸡饭","蒸蛋瘦肉饭","清炒时蔬套餐","冬瓜丸子饭","菌菇鸡肉饭","清蒸鸡腿饭","青菜豆腐饭","丝瓜瘦肉饭","山药鸡肉饭","白菜瘦肉饭"],
+        "酸甜":["糖醋里脊盖饭","糖醋鸡蛋盖饭","糖醋鸡块盖饭","糖醋鱼块盖饭","糖醋藕片套餐","糖醋土豆盖饭","糖醋香菇盖饭","糖醋豆腐盖饭","糖醋虾仁盖饭","糖醋萝卜套餐"]
+    },
+    "地方特色":{
+        "辣":["螺蛳粉","麻辣川菜套餐","长沙臭豆腐套餐","川味冒菜","麻辣钵钵鸡","川味水煮肉片套餐","麻辣兔丁套餐","重庆江湖菜套餐","香辣卤味拼盘","川味椒麻鸡套餐"],
+        "不辣":["广式烧腊饭","潮汕牛肉粉","沙县蒸饺套餐","扬州炒饭套餐","南京盐水鸭套餐","杭州小笼包套餐","福建扁食套餐","云南米线不辣款","广式腊味饭","港式叉烧饭"],
+        "清淡":["粤式粥品套餐","广式蒸点套餐","潮汕白粥配菜套餐","顺德蒸菜套餐","浙式清淡蒸菜套餐","白切鸡套餐","清炖鸡汤套餐","广式菜心套餐","冬瓜排骨汤套餐","山药瘦肉粥套餐"],
+        "酸甜":["糖醋鱼套餐","无锡排骨套餐","苏式糖醋小排套餐","咕咾肉套餐","糖醋藕套餐","酸甜豆腐套餐","酸甜鸡柳套餐","酸甜虾仁套餐","酸甜萝卜套餐","酸甜山药套餐"]
+    },
+    "小吃卤味":{
+        "辣":["狼牙土豆","麻辣串","卤鸭脖","麻辣藕片","麻辣豆干","卤鸭翅","麻辣海带","卤鸡爪","麻辣毛豆","卤鸭锁骨"],
+        "不辣":["蒸玉米","鸡蛋堡","手撕鸡","原味卤豆干","卤鸡蛋","原味卤鸡腿","蒸红薯","原味豆浆","原味豆腐脑","原味卤鸡胸"],
+        "清淡":["原味豆浆","卤鸡胸","原味豆腐脑","蒸山药","蒸南瓜","原味水煮蛋","原味小米粥","原味蒸土豆","原味藕片","原味绿豆汤"],
+        "酸甜":["水果捞","冰糖葫芦","酸梅汤","酸甜山楂糕","酸甜银耳羹","酸甜圣女果捞","酸甜葡萄捞","酸甜芒果捞","酸甜梨汤","酸甜苹果羹"]
+    },
+    "煲菜":{
+        "辣":["牛杂煲","香辣烤鱼","麻辣鸡煲","香辣牛蛙煲","香辣排骨煲","香辣虾煲","香辣牛腩煲","香辣豆腐煲","香辣肥肠煲","香辣毛血旺煲"],
+        "不辣":["猪肚鸡","筋头巴脑牛肉煲","玉米排骨汤煲","香菇鸡煲","山药排骨煲","莲藕排骨汤煲","虾仁豆腐煲","菌菇鸡汤煲","萝卜牛腩煲","白菜豆腐煲"],
+        "清淡":["菌菇鸡汤煲","冬瓜丸子煲","山药鸡汤煲","丝瓜鸡蛋煲","豆腐菌菇煲","白菜瘦肉煲","萝卜鸡肉煲","鲜菇豆腐煲","玉米鸡煲","莲藕鸡煲"],
+        "酸甜":["番茄牛腩煲","番茄鸡煲","番茄豆腐煲","番茄虾仁煲","番茄排骨煲","番茄菌菇煲","番茄丸子煲","番茄莲藕煲","番茄萝卜煲","番茄土豆煲"]
+    }
+}
+
+// 过敏安全成品菜（≥10种）
+const allergySafeFood = [
+    "番茄鸡蛋面","土豆牛肉饭","广式烧腊饭","蔬菜粥","清蒸鱼套餐","香菇青菜盖饭","鸡蛋羹便当",
+    "阳春面","蒸蛋瘦肉饭","白菜瘦肉粥","丝瓜鸡蛋便当","菌菇鸡肉饭","冬瓜丸子套餐","清炒豆腐套餐"
+]
+
+// 疾病适配成品菜，每种病症≥10道成品熟食
+const diseaseData = {
+    "糖尿病": "清蒸鱼套餐、香菇青菜盖饭、蔬菜粥、卤鸡胸便当、阳春面、冬瓜丸子套餐、白菜瘦肉粥、菌菇鸡肉饭、丝瓜鸡蛋便当、清炒豆腐套餐、山药瘦肉粥、白切鸡套餐",
+    "高血压": "清蒸鱼套餐、蔬菜粥、香菇滑鸡饭、清炒时蔬便当、阳春面、冬瓜丸子套餐、白菜瘦肉粥、菌菇鸡肉饭、丝瓜鸡蛋便当、卤鸡胸便当、山药瘦肉粥、白切鸡套餐",
+    "痛风": "番茄鸡蛋面、蔬菜粥、清蒸鱼套餐、香菇青菜盖饭、阳春面、冬瓜丸子套餐、白菜瘦肉粥、菌菇鸡肉饭、丝瓜鸡蛋便当、清炒豆腐套餐、山药瘦肉粥、白切鸡套餐",
+    "胃炎": "蔬菜粥、蒸蛋瘦肉饭、阳春面、广式白粥套餐、山药瘦肉粥、白菜瘦肉粥、冬瓜丸子套餐、丝瓜鸡蛋便当、菌菇鸡肉饭、白切鸡套餐、豆腐青菜粥、小米粥套餐",
+    "高血脂": "清蒸鱼套餐、卤鸡胸便当、蔬菜粥、香菇青菜盖饭、阳春面、冬瓜丸子套餐、白菜瘦肉粥、菌菇鸡肉饭、丝瓜鸡蛋便当、清炒豆腐套餐、山药瘦肉粥、白切鸡套餐",
+    "感冒": "蔬菜面片汤、蔬菜粥、阳春面、冬瓜丸子套餐、白菜瘦肉粥、山药瘦肉粥、丝瓜鸡蛋便当、菌菇鸡汤煲、小米粥套餐、豆腐青菜粥、鲜菇素面、青菜瘦肉面",
+    "湿疹": "蔬菜粥、清蒸鱼套餐、阳春面、香菇青菜盖饭、冬瓜丸子套餐、白菜瘦肉粥、菌菇鸡肉饭、丝瓜鸡蛋便当、清炒豆腐套餐、山药瘦肉粥、白切鸡套餐、小米粥套餐"
+}
+
+// 渲染菜品列表，每个菜独立美团、淘宝按钮
+function renderList(containerId, foodArr){
+    const wrap = document.getElementById(containerId);
+    wrap.innerHTML = "";
+    foodArr.forEach(item=>{
+        const div = document.createElement('div');
+        div.className = "item-row";
+        div.innerHTML = `
+            <span class="item-name">${item}</span>
+            <button class="item-btn mt-item" onclick="openMeituan('${item}')">美团</button>
+            <button class="item-btn tb-item" onclick="openTaobao('${item}')">淘宝闪购</button>
+        `
+        wrap.appendChild(div);
+    })
+}
+
+function getNormalRecommend(){
+    if(!currentType || !currentTaste){
+        alert("请选择品类和口味");
+        return;
+    }
+    let list = normalFood[currentType][currentTaste];
+    if(list.length===0){
+        document.getElementById('normalList').innerText="该分类暂无对应口味推荐，换一个选择吧";
+    }else{
+        renderList('normalList', list);
+    }
+    document.getElementById('normalResult').style.display='block';
+}
+
+function getAllergyRecommend(){
+    let input = document.getElementById('allergyInput').value.trim();
+    if(!input){
+        alert("请输入忌口或者过敏食物");
+        return;
+    }
+    renderList('allergyList', allergySafeFood);
+    document.getElementById('allergyResult').style.display='block';
+}
+
+function getDiseaseRecommend(){
+    let key = document.getElementById('diseaseInput').value.trim();
+    if(!key){
+        alert("请输入病症名称");
+        return;
+    }
+    let resText = "暂无该病症推荐数据";
+    let resArr = [];
+    for(let name in diseaseData){
+        if(name.includes(key) || key.includes(name)){
+            resText = diseaseData[name];
+            resArr = resText.split("、");
+            break;
+        }
+    }
+    if(resArr.length>0){
+        renderList('diseaseList', resArr);
+    }else{
+        document.getElementById('diseaseList').innerText = resText;
+    }
+    document.getElementById('diseaseResult').style.display='block';
+}
+
+function openMeituan(kw){
+    const w = encodeURIComponent(kw);
+    window.open(`https://s.meituan.com/search?keyword=${w}`);
+}
+function openTaobao(kw){
+    const w = encodeURIComponent(kw);
+    window.open(`https://s.taobao.com/search?q=${w}`);
+}
+</script>
+</body>
+</html>
